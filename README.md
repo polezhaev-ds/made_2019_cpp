@@ -3,7 +3,7 @@ MADE: Repository for home assignments (Advanced C++ course)
 
 # Features of calculator:
 * support of 4 mathematical binary operations (+, -, *, /), one unary (-) and parentheses, spaces and tabs
-* 158 tests to cover functionality ([Header onlt catch2 library](https://github.com/catchorg/Catch2))
+* 158 tests to cover functionality ([Header based catch2 library](https://github.com/catchorg/Catch2))
 
 # How to build and run
 * `make` - to build both *calc* (calculator)  and calc_test (tests for calculator)
