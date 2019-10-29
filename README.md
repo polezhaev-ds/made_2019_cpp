@@ -11,6 +11,6 @@ MADE: Repository for home assignments (Advanced C++ course)
 * `make run ARGS="123+343"` - to build and run calculator with a give expression
 * `make run` - to build and run calculator with default expression
 * `make clean` - to clean output
-* `calc "123+123"` - to run calculator with a given expression
-* `calc_test` - to run all tests
+* `./calc "123+123"` - to run calculator with a given expression
+* `./calc_test` - to run all tests
 
