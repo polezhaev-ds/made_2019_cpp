@@ -10,8 +10,8 @@
 #include "LexicalAnalyzer.h"
 #include "SyntaxAnalyzer.h"
 
-int Parser::ParseAndCompute(const std::string& expression) {
-    std::vector<std::shared_ptr<Token>> tokens = LexicalAnalyzer::Analyze(expression);
+int ParseAndCompute(const std::string& expression) {
+    std::vector<std::shared_ptr<Token>> tokens = LexicalAnalysis(expression);
 
 #ifndef NDEBUG
     std::cout << "Tokens:" << std::endl;

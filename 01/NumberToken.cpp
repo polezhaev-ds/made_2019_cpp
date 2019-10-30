@@ -4,14 +4,6 @@
 
 #include "NumberToken.h"
 
-int NumberToken::getNumber() const {
-    return number;
-}
-
-std::string NumberToken::toString() const {
-    return std::to_string(number);
-}
-
-int NumberToken::getLength() const {
-    return length;
+std::string NumberToken::getValue() const {
+    return numberStr;
 }

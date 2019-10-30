@@ -10,21 +10,20 @@
 #include <string>
 #include "Token.h"
 #include "NumberToken.h"
-#include <memory>
 
 class SyntaxAnalyzer {
 public:
-    explicit SyntaxAnalyzer(std::vector<std::shared_ptr<Token>> tokens, std::string expression):
-            tokens(std::move(tokens)),
-            expression(std::move(expression)),
+    explicit SyntaxAnalyzer(const std::vector<std::shared_ptr<Token>>& tokens, const std::string& expression):
+            tokens(tokens),
+            expression(expression),
             currentIndex(0)
     {
     }
 
     int analyzeAndCalculate();
 private:
-    std::vector<std::shared_ptr<Token>> tokens;
-    std::string expression;
+    const std::vector<std::shared_ptr<Token>>& tokens;
+    const std::string& expression;
     int currentIndex;
 
     int expressionRecursion();

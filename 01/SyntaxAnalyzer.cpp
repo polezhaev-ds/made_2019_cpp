@@ -3,7 +3,6 @@
 //
 
 #include <string>
-#include <sstream>
 #include "SyntaxAnalyzer.h"
 #include "AnalyzerException.h"
 
@@ -97,7 +96,7 @@ int SyntaxAnalyzer::number() {
         throw AnalyzerException("Error! Incomplete expression!", expression.length());
     }
     if (currentIndex < tokens.size() && tokens[currentIndex]->getType() == TokenType::Number) {
-        int number = std::static_pointer_cast<NumberToken>(tokens[currentIndex])->getNumber();
+        int number = std::stoi(tokens[currentIndex]->getValue());
         currentIndex++;
         return number;
     }

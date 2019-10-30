@@ -5,7 +5,7 @@
 #include "Exception.h"
 
 
-std::string Exception::getMessage() const {
+const std::string& Exception::getMessage() const {
     return message;
 }
 

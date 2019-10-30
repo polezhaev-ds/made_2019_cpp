@@ -10,21 +10,16 @@
 
 class NumberToken: public Token {
 public:
-    NumberToken(const std::string& numberStr, int position):
+    NumberToken(std::string numberStr, int position):
         Token(TokenType::Number, position),
-        number(std::stoi(numberStr)),
-        length(numberStr.length())
+        numberStr(std::move(numberStr))
     {
-
     }
 
-    int getNumber() const;
-    std::string toString() const override;
-    int getLength() const override;
+    std::string getValue() const override;
 
 private:
-    int number;
-    int length;
+    std::string numberStr;
 
 };
 

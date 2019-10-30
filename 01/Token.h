@@ -11,7 +11,8 @@
 
 enum TokenType {
     None, OperationPlus, OperationMinus, OperationMultiply, OperationDivide,
-    LeftBracket, RightBracket, Number };
+    LeftBracket, RightBracket, Number
+};
 
 class Token {
 public:
@@ -24,8 +25,8 @@ public:
 
     TokenType getType() const;
     int getPosition() const;
+    virtual std::string getValue() const;
     virtual std::string toString() const;
-    virtual int getLength() const;
 
     #ifndef NDEBUG
     virtual std::string toDebugString() const;

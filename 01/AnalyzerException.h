@@ -15,11 +15,10 @@ public:
         Exception(std::move(message)),
         position(position)
     {
+        this->message += " Position " + std::to_string(position) + ".";
     }
 
     int getPostion() const;
-    std::string getMessage() const override;
-
 
 private:
     int position;

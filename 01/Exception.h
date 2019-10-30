@@ -9,16 +9,16 @@
 
 class Exception: public std::exception {
 public:
-    Exception(std::string message):
+    explicit Exception(std::string message):
         message(std::move(message))
     {
     }
 
-    virtual std::string getMessage() const;
+    const std::string& getMessage() const;
 
     const char* what() const noexcept override;
 
-private:
+protected:
     std::string message;
 };
 

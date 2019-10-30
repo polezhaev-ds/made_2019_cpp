@@ -4,9 +4,21 @@
 
 #include "LexicalAnalyzer.h"
 #include "AnalyzerException.h"
-#include <sstream>
 
-std::vector<std::shared_ptr<Token>> LexicalAnalyzer::Analyze(const std::string& expression)  {
+
+static bool IsDigitSymbol(char ch)  {
+    return ch >= '0' && ch <= '9';
+}
+
+static bool IsOperationSymbol(char ch)  {
+    return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')';
+}
+
+static bool IsSpaceSymbol(char ch)  {
+    return ch == ' ' || ch == '\t';
+}
+
+std::vector<std::shared_ptr<Token>> LexicalAnalysis(const std::string& expression)  {
     std::vector<std::shared_ptr<Token>> tokens;
     int i = 0;
     while (i < expression.length()) {
@@ -22,9 +34,8 @@ std::vector<std::shared_ptr<Token>> LexicalAnalyzer::Analyze(const std::string& 
             }
             tokens.push_back(Token::CreateToken(expression.substr(startIndex, digitsCount), startIndex));
         } else if (!IsSpaceSymbol(expression[i])) {
-            std::stringstream messageStream;
-            messageStream << "Error! Unknown symbol '" << expression[i] << "'!";
-            throw AnalyzerException(messageStream.str(), i);
+            std::string message = std::string("Error! Unknown symbol '") + expression[i] + "'!";
+            throw AnalyzerException(message, i);
         } else {
             i++;
         }
@@ -32,16 +43,5 @@ std::vector<std::shared_ptr<Token>> LexicalAnalyzer::Analyze(const std::string& 
     return tokens;
 }
 
-bool LexicalAnalyzer::IsDigitSymbol(char ch)  {
-    return ch >= '0' && ch <= '9';
-}
-
-bool LexicalAnalyzer::IsOperationSymbol(char ch)  {
-    return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')';
-}
-
-bool LexicalAnalyzer::IsSpaceSymbol(char ch)  {
-    return ch == ' ' || ch == '\t';
-}
 
 

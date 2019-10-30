@@ -3,7 +3,6 @@
 //
 
 #include <regex>
-#include <sstream>
 #include "Token.h"
 #include "NumberToken.h"
 #include "Exception.h"
@@ -16,33 +15,31 @@ int Token::getPosition() const {
     return position;
 }
 
-std::string Token::toString() const {
+std::string Token::getValue() const {
     switch (type) {
         case TokenType::OperationPlus:
-            return std::string("+");
+            return "+";
         case TokenType::OperationMinus:
-            return std::string("-");
+            return "-";
         case TokenType::OperationMultiply:
-            return std::string("*");
+            return "*";
         case TokenType::OperationDivide:
-            return std::string("/");
+            return "/";
         case TokenType::LeftBracket:
-            return std::string("(");
+            return "(";
         case TokenType::RightBracket:
-            return std::string(")");
+            return ")";
     }
-    return std::string("");
+    return "";
 }
 
-int Token::getLength() const {
-    return 1;
+std::string Token::toString() const {
+    return getValue();
 }
 
 #ifndef NDEBUG
 std::string Token::toDebugString() const {
-    std::stringstream ss;
-    ss << "(\"" << toString() << "\", " << position << ")";
-    return ss.str();
+    return "(\"" + toString() + "\", " + std::to_string(position) + ")";
 }
 #endif
 

@@ -7,12 +7,6 @@
 
 #include <string>
 
-class Parser {
-public:
-    static int ParseAndCompute(const std::string& expression);
-private:
-
-};
-
+int ParseAndCompute(const std::string& expression);
 
 #endif //HW1_PARSER_H

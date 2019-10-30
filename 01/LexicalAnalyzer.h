@@ -10,14 +10,7 @@
 #include <memory>
 #include "Token.h"
 
-class LexicalAnalyzer {
-public:
-    static std::vector<std::shared_ptr<Token>> Analyze(const std::string& expression);
-private:
-    static bool IsDigitSymbol(char ch);
-    static bool IsOperationSymbol(char ch);
-    static bool IsSpaceSymbol(char ch);
-};
+std::vector<std::shared_ptr<Token>> LexicalAnalysis(const std::string& expression);
 
 
 #endif //HW1_LEXICALANALYZER_H

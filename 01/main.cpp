@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     std::string expression = argv[1];
     try {
         std::cout << "Expression: \"" << expression << "\"" << std::endl;
-        int result = Parser::ParseAndCompute(expression);
+        int result = ParseAndCompute(expression);
         std::cout << "Result: " << result << std::endl;
     }
     catch (AnalyzerException& ex) {

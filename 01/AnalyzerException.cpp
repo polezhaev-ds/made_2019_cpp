@@ -10,7 +10,4 @@ int AnalyzerException::getPostion() const {
     return position;
 }
 
-std::string AnalyzerException::getMessage() const {
-    return Exception::getMessage() + " Position " + std::to_string(position) + ".";
-}
 
