@@ -4,31 +4,32 @@
 
 #include "Matrix.h"
 
-Matrix::Matrix(std::vector<std::vector<int>> matrix) :
-        rows(matrix.size()),
+Matrix::Matrix(const std::vector<std::vector<int>>& vector2d) :
+        rows(vector2d.size()),
         columns(0),
         values(nullptr)
 {
-    if (!matrix.empty())
-        columns = matrix[0].size();
+    if (!vector2d.empty())
+        columns = vector2d[0].size();
     AllocateMemory();
-    for (std::size_t i = 0; i < rows; i++)
-        for (std::size_t j = 0; j < columns; j++)
-            values[i][j] = matrix[i][j];
+    CopyFrom(vector2d);
 }
 
 const int& Matrix::getValueBy(std::size_t row, std::size_t column) const {
-    if (row < 0 || row >= rows || column < 0 || column >= columns)
+    if (row >= rows || column >= columns)
         throw std::out_of_range("Error! Indices (" + std::to_string(row) + ", " + std::to_string(column) +
                                 ") are out of range");
     return values[row][column];
 }
 
 int &Matrix::getValueBy(std::size_t row, std::size_t column) {
-    return const_cast<int&>(((const Matrix&)(*this)).getValueBy(row, column));
+    if (row >= rows || column >= columns)
+        throw std::out_of_range("Error! Indices (" + std::to_string(row) + ", " + std::to_string(column) +
+                                ") are out of range");
+    return values[row][column];
 }
 
-bool Matrix::operator == (const Matrix &matrix) const {
+bool Matrix::operator == (const Matrix& matrix) const {
     if (rows != matrix.rows || columns != matrix.columns)
         return false;
     for (size_t i = 0; i < rows; i++)
@@ -38,22 +39,22 @@ bool Matrix::operator == (const Matrix &matrix) const {
     return true;
 }
 
-bool Matrix::operator != (const Matrix &matrix) const {
+bool Matrix::operator != (const Matrix& matrix) const {
     return !(*this == matrix);
 }
 
-Matrix &Matrix::operator = (const Matrix &matrix) {
+Matrix &Matrix::operator = (const Matrix& matrix) {
     if (this == &matrix)
         return *this;
     FreeMemory();
     rows = matrix.rows;
     columns = matrix.columns;
     AllocateMemory();
-    CopyFrom(matrix);
+    CopyFrom(matrix.values);
     return *this;
 }
 
-Matrix &Matrix::operator = (Matrix &&matrix) noexcept {
+Matrix &Matrix::operator = (Matrix&& matrix) noexcept {
     if (this == &matrix)
         return *this;
     FreeMemory();
@@ -86,10 +87,11 @@ void Matrix::AllocateMemory() {
     }
 }
 
-void Matrix::CopyFrom(const Matrix &matrix) {
+template <typename T>
+void Matrix::CopyFrom(const T& data) {
     for (size_t i = 0; i < rows; i++)
         for (size_t j = 0; j < columns; j++)
-            values[i][j] = matrix.values[i][j];
+            values[i][j] = data[i][j];
 }
 
 void Matrix::FreeMemory() {
@@ -105,7 +107,6 @@ void Matrix::Reset() {
     rows = columns = 0;
     values = nullptr;
 }
-
 
 Matrix operator * (int multiplier, const Matrix &b) {
     return b * multiplier;

@@ -12,6 +12,7 @@
 #include <iostream>
 
 class Matrix {
+
 public:
 
     class MatrixRowProxy {
@@ -48,7 +49,7 @@ public:
 
     };
 
-    explicit Matrix(std::vector<std::vector<int>> matrix);
+    explicit Matrix(const std::vector<std::vector<int>>& vector2d);
 
     explicit Matrix(std::size_t rows = 0, std::size_t columns = 0):
         rows(rows),
@@ -64,7 +65,7 @@ public:
         values(nullptr)
     {
         AllocateMemory();
-        CopyFrom(matrix);
+        CopyFrom(matrix.values);
     }
 
     Matrix(Matrix&& matrix) noexcept:
@@ -75,7 +76,7 @@ public:
         matrix.Reset();
     }
 
-    virtual ~Matrix() {
+    ~Matrix() {
         FreeMemory();
     }
 
@@ -118,7 +119,8 @@ private:
 
     void AllocateMemory();
 
-    void CopyFrom(const Matrix& matrix);
+    template <typename T>
+    void CopyFrom(const T& data);
 
     void FreeMemory();
 
