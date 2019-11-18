@@ -1,2 +1,2 @@
 test:
-    $(MAKE) -C 05 test
+	$(MAKE) -C 05 test
