@@ -7,7 +7,6 @@
 #include <iostream>
 #include <cstdint>
 #include <string>
-#include <regex>
 #include <utility>
 #include "errors.h"
 
@@ -33,6 +32,13 @@ public:
 private:
     std::istream& in_;
 
+    [[nodiscard]] bool isUnsignedInteger(const std::string& str) const {
+        for (char ch : str)
+            if (!std::isdigit(ch))
+                return false;
+        return true;
+    }
+
     Error load(bool& value) {
         std::string text;
 
@@ -54,15 +60,11 @@ private:
         in_ >> text;
 
         try {
-            if (!std::regex_match(text, std::regex("\\d+")))
+            if (!isUnsignedInteger(text))
                 throw std::invalid_argument("Invalid unsigned integer format");
             value = std::stoull(text);
         }
-        catch (const std::invalid_argument& e)
-        {
-            return Error::CorruptedArchive;
-        }
-        catch (const std::out_of_range& e)
+        catch (const std::exception& e)
         {
             return Error::CorruptedArchive;
         }
