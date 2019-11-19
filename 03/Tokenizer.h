@@ -7,9 +7,10 @@
 
 #include <functional>
 #include <string>
+#include <cstddef>
 
 using ParsingHandler = std::function<void (const std::string& str)>;
-using NextTokenParsedHandler = std::function<void (const std::string& nextToken, int position)>;
+using NextTokenParsedHandler = std::function<void (const std::string& nextToken, std::size_t position)>;
 
 
 class Tokenizer {

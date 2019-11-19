@@ -28,13 +28,13 @@ int main(int argc, char* argv[]) {
             .setOnParseFinishedHandler([](const std::string &str) {
                 std::cout << "Finished to tokenize string \"" << str << "\"" << std::endl;
             })
-            .setOnNextTokenHandler([](const std::string &nextToken, int position) {
+            .setOnNextTokenHandler([](const std::string &nextToken, std::size_t position) {
                 std::cout << "\tToken \"" << nextToken << "\" is found at position " << position << std::endl;
             })
-            .setOnNextNumericTokenHandler([](const std::string &nextToken, int position) {
+            .setOnNextNumericTokenHandler([](const std::string &nextToken, std::size_t position) {
                 std::cout << "\t\tNumeric  token \"" << nextToken << "\" is found at position " << position << std::endl;
             })
-            .setOnNextStringTokenHandler([](const std::string &nextToken, int position) {
+            .setOnNextStringTokenHandler([](const std::string &nextToken, std::size_t position) {
                 std::cout << "\t\tString token \"" << nextToken << "\" is found at position " << position << std::endl;
             });
     tokenizer.parse(argv[1]);

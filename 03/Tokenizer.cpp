@@ -8,13 +8,13 @@ enum TokenType { Unknown, Number, String };
 
 void Tokenizer::parse(const std::string& str) const {
     int tokenStartIndex = -1;
-    int tokenWLength = 0;
+    std::size_t tokenWLength = 0;
     TokenType tokenType = TokenType::Unknown;
 
     if (onParseStarted != nullptr)
         onParseStarted(str);
 
-    for (int i = 0; i < str.size() + 1; i++)
+    for (std::size_t i = 0; i < str.size() + 1; i++)
         if (i != str.size() && std::isdigit(str[i])) {
 
             if (tokenType == TokenType::Unknown)

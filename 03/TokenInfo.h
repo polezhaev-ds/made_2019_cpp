@@ -7,10 +7,11 @@
 
 #include <iostream>
 #include <string>
+#include <cstddef>
 
 class TokenInfo {
 public:
-    TokenInfo(std::string token, int position):
+    TokenInfo(std::string token, std::size_t position):
             token(std::move(token)),
             position(position)
     {
@@ -22,11 +23,11 @@ public:
 
     [[nodiscard]] const std::string& getToken() const;
 
-    [[nodiscard]] int getPosition() const;
+    [[nodiscard]] std::size_t getPosition() const;
 
 private:
     std::string token;
-    int position;
+    std::size_t position;
 
 };
 

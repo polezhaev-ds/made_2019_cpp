@@ -12,7 +12,7 @@ const std::string &TokenInfo::getToken() const {
     return token;
 }
 
-int TokenInfo::getPosition() const {
+std::size_t TokenInfo::getPosition() const {
     return position;
 }
 
