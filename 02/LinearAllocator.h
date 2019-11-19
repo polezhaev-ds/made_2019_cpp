@@ -16,16 +16,13 @@ public:
         offset(0),
         buffer(nullptr)
     {
-        if (maxSize > 0) {
-            buffer = (char *) std::malloc(maxSize);
-            if (buffer == nullptr)
-                throw std::bad_alloc();
-        }
+        if (maxSize > 0)
+            buffer = new char [maxSize];
     }
 
     ~LinearAllocator() {
         if (buffer != nullptr)
-            std::free(buffer);
+           delete[] buffer;
     }
 
     LinearAllocator(const LinearAllocator& obj) = delete;
