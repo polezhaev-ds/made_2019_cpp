@@ -9,6 +9,8 @@ test:
 	$(MAKE) -C 04 test
 	echo "Assignment 5"
 	$(MAKE) -C 05 test
+	echo "Assignment 6"
+	$(MAKE) -C 06 test
 
 clean:
 	$(MAKE) -C 01 clean
@@ -16,3 +18,4 @@ clean:
 	$(MAKE) -C 03 clean
 	$(MAKE) -C 04 clean
 	$(MAKE) -C 05 clean
+	$(MAKE) -C 06 clean
