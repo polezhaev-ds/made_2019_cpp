@@ -1,6 +1,42 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #5 - Serialization and templates
+
+### Features
+* `Serializer` and `Deserializer` classes are correspodingly for serialization into string and deserialization from it. 
+* They support:
+    * `ostream`/`istream` classes for storing serialization result or loading object from it 
+    * functional operation `()` to pass parameters that are serialized
+    * can serializer or deserialize objects of any classes that have at least one field and implement serialize method:
+    ~~~
+    struct Data {
+        std::uint64_t a;
+        bool b;
+        std::uint64_t c;
+
+        template <class Serializer>
+        Error serialize(Serializer& serializer) {
+            return serializer(a, b, c); // pass fields to serialize or deserialize here
+        }
+    
+        template <class Serializer>
+        Error serialize(Serializer& serializer) const { //this method is required to support constant objects for serialization
+            return serializer(a, b, c);
+        }
+        ...
+    }
+    ~~~
+* Main functionality is covered by 41 assertions ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *serialization* and *serialization_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run silent serialization demo for example from assigment
+* `make clean` - to clean output
+* `./build/serialization` - to run silent serialization demo
+* `./build/serialization_test` - to run serialization tests
+
 ## Home assignment #4 - Matrix class
 
 ### Features
