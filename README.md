@@ -1,6 +1,27 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #4 - Matrix class
+
+### Features
+* `Matrix` class stores integers (`int`) and supports the following methods and operations:
+    * Constructor for `std::vector`, for zero-filled `rows` x `columns` matrix
+    * Getters for dimensional sizes of matrix
+    * Comparison operations: `==` and `!=`
+    * Arithmetic operations: `<integer_number> * <matrix>` and `<matrix> * <integer_number>`
+    * Assignment operations: `=`, `*= <integer_number>`
+    * Indexing using proxy class: `<matrix>[i][j]`
+* Matrix class is correctly processed as C++ constant 
+* 130 assertions to cover functionality by tests ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *matrix* and *matrix_test* (tests for matrix)
+* `make test` - to build and run tests
+* `make run` - to build and run silent matrix demo for example from assigment and constant example
+* `make clean` - to clean output
+* `./build/matrix` - to run silent matrix demo
+* `./build/matrix_test` - to run run matrix tests
+
 ## Home assignment #3 - Tokenizer with callbacks
 
 ### Features
