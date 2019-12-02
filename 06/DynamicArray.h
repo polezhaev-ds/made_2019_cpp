@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <cstring>
 
 template <typename T>
 class DynamicArray {
@@ -20,7 +21,7 @@ public:
             size(0)
     {
         if(bufferSize > 0)
-            buffer = new T[bufferSize];
+            buffer = (T*)new char [bufferSize * sizeof(T)];
     }
 
     DynamicArray(const T* array, size_t length);
@@ -40,10 +41,10 @@ public:
         obj.size = 0;
     }
 
-    virtual ~DynamicArray()
+    ~DynamicArray()
     {
         if (buffer != nullptr)
-            delete[] buffer;
+            delete[] (char*)buffer;
     }
 
     DynamicArray& operator = (const DynamicArray<T>& obj);
@@ -118,9 +119,9 @@ DynamicArray<T>::DynamicArray(const T* array, size_t length):
     if (array == nullptr)
         throw std::invalid_argument("Argument array should not be nullptr!");
 
-    buffer = new T[capacity];
+    buffer = (T*)new char [capacity * sizeof(T)];
     for (std::size_t i = 0; i < length; i++)
-        buffer[i] = array[i];
+        new(buffer + i) T(array[i]);
 
 }
 
@@ -129,7 +130,7 @@ DynamicArray<T> &DynamicArray<T>::operator = (const DynamicArray<T>& obj) {
     if (this == &obj)
         return *this;
     if (buffer != nullptr)
-        delete[] buffer;
+        delete[] (char*)buffer;
     AllocateMemoryAndCopyFrom(obj);
     return *this;
 }
@@ -139,7 +140,7 @@ DynamicArray<T> &DynamicArray<T>::operator = (DynamicArray<T>&& obj) noexcept {
     if (this == &obj)
         return *this;
     if (buffer != nullptr)
-        delete[] buffer;
+        delete[] (char*)buffer;
 
     capacity = obj.capacity;
     buffer = obj.buffer;
@@ -157,7 +158,8 @@ void DynamicArray<T>::Append(const T& value) {
     if (size == capacity)
         GrowMemory();
 
-    buffer[size++] = value;
+    new (buffer + size) T(value);
+    size++;
 }
 
 template<typename T>
@@ -170,10 +172,11 @@ void DynamicArray<T>::InsertAt(std::size_t index, const T& value) {
 
     assert(capacity > size);
 
-    for (std::size_t i = size; i > index; i--)
-        buffer[i] = buffer[i - 1];
+    new (buffer + size) T(std::move(buffer[size - 1]));
+    for (std::size_t i = size - 1; i > index; i--)
+        buffer[i] = std::move(buffer[i - 1]);
 
-    buffer[index] = value;
+    new (buffer + index) T(value);
     size++;
 }
 
@@ -182,8 +185,9 @@ void DynamicArray<T>::DeleteAt(std::size_t index) {
     if (index >= size)
         throw std::invalid_argument("Invalid value of index!");
 
+    (buffer + index)->~T();
     for (std::size_t i = index; i < size - 1; i++)
-        buffer[i] = buffer[i + 1];
+        buffer[i] = std::move(buffer[i + 1]);
 
     size--;
     if (size < capacity / 4 )
@@ -195,6 +199,7 @@ void DynamicArray<T>::DeleteLast() {
     if (size == 0)
         throw std::underflow_error("Cannot delete last element of empty list!");
 
+    (buffer + size)->~T();
     size--;
     if(size < capacity / 4 )
         ReduceMemory();
@@ -221,9 +226,9 @@ template<typename T>
 void DynamicArray<T>::AllocateMemoryAndCopyFrom(const DynamicArray& obj) {
     capacity = obj.capacity;
     size = obj.size;
-    buffer = new T[capacity];
+    buffer = (T *)new char[capacity * sizeof(T)];
     for (std::size_t i = 0; i < size; i++)
-        buffer[i] = obj.buffer[i];
+        new (buffer + i) T(obj.buffer[i]);
 }
 
 template<typename T>
@@ -234,15 +239,15 @@ void DynamicArray<T>::MoveDataToNewBufferWithSize(std::size_t newBufferSize) {
     size = std::min(size, newBufferSize);
 
     if (newBufferSize != 0) {
-        T *tempBuffer = new T[newBufferSize];
+        T *tempBuffer = (T*)new char[newBufferSize * sizeof(T)];
         for (std::size_t i = 0; i < size; i++)
-            tempBuffer[i] = buffer[i];
+            new (tempBuffer + i) T(buffer[i]);
         if (buffer != nullptr)
-            delete[] buffer;
+            delete[] (char*)buffer;
         buffer = tempBuffer;
     } else {
         if (buffer != nullptr)
-            delete[] buffer;
+            delete[] (char*)buffer;
         buffer = nullptr;
     }
 
