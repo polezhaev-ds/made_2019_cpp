@@ -25,7 +25,7 @@ std::array<std::string, count> ArgsToString() {
 }
 
 template <std::size_t count,  class T, class... ArgsT>
-std::array<std::string, count> ArgsToString(T argValue, ArgsT&&... args) {
+std::array<std::string, count> ArgsToString(T&& argValue, ArgsT&&... args) {
     std::array<std::string, count> argStrings = ArgsToString<count, ArgsT...>(std::forward<ArgsT>(args)...);
     argStrings[count - 1 - sizeof...(args)] = toString(argValue);
     return argStrings;
