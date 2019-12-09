@@ -1,6 +1,28 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #6 - BigInt class (operations and C++ references)
+
+### Features
+* `BigInt` class supports the followint operation signs
+    * unary `-`
+    * binary `+` and `-` for both `BigInt` objects and `int`
+    * comparison operators `<`, `>`, `<=`, `>=`, `==`, `!=` for both `BigInt` objects and `int`
+* Different types of references were used in operations to support constant and temporary objects
+* `BigInt` is based on the own vector implementation (template class `DynamicArray`) - requirement of assignment
+* `BigInt` and `DynamicArray` implement "The rule of 5" (constructor, copy constructor, move constructor, assignment operator, move assignment)
+* The size of `BigInt` and `DynamicArray` is limeted by RAM and `std::size_t`
+* Main functionality is covered by 203 assertions of tests ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *bigint* and *biging_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run a simple `BigInt` demo
+* `make clean` - to clean output
+* `./build/bigint` - to run a simple `BigInt` demo
+* `./build/bigint_test` - to run `BigInt` tests
+
+
 ## Home assignment #5 - Serialization and templates
 
 ### Features
