@@ -1,6 +1,47 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #8 - Vector (STL-like implementation)
+
+### Features
+* It is a simple STL-like implementation of a template `Vector` class
+* The following template classes were implemented:
+    * `Allocator<T>` - a simple allocator that supports allocation with `new[]` and deallocation with `delete[]`
+    * `Iterator<T>` - a custom random access iterator which supports all methods and traits required by STL
+    * `Vector<T,Alloc>` - a vector class that supports only constructors (with reservation and filling in with default `T()` or specific value, for `std::initializer_list<T>`, copy-constructor and move-constructor), destructor, operators (assign and move-assign `=`, comparison `==` and `!=`, `[]`), methods `clear`, `reserve`, `resize`, `begin`, `end`, `rbegin`, `rend`, `push_back`, `pop_back`, `empty`, `size`, `capacity`)
+* To use `Vector<T>`, it is neccessary to include `"Vector.h"` header
+* Main functionality is covered by 339 assertions ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *vector* and *vector_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run a simple sample
+* `make clean` - to clean output
+* `./build/vector` - to run a simple sample
+* `./build/vector_test` - to run tests
+
+## Home assignment #7 - Format (exceptions)
+
+### Features
+* Format function `Format(formatStr, args...)` was implemented in a way similar to Python/C# formating
+* Arguments should be numberted and included in braces, for example: `"{0} + {1} = {3}"`
+* According to assignment requirements symbols `'{'` and `'}'` cannot be used without parameter
+* Function supports C++ types that can be saved to `std::stringstream` using `<<` operator
+* Examples: 
+    * `Format(" {0} Bjarne {0} ", "Stroustrup")` returns `" Stroustrup Bjarne Stroustrup "`
+    * `Format("{0}, {1}, {2}", 4, 'a', "cdf")` returns `"4, a, cdf"`
+* In order to use Format fuction, it neccessary to include `"format.h"` header file
+* In the case of errors, fuction raizes `std::runtime_error` exception with appropriate message
+* Main functionality is covered by 60 assertions ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *format* and *format_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run a simple sample
+* `make clean` - to clean output
+* `./build/format` - to run a simple sample
+* `./build/format_test` - to run tests
+
 ## Home assignment #6 - BigInt class (operations and C++ references)
 
 ### Features
@@ -12,7 +53,7 @@ MADE: Repository for home assignments (Advanced C++ course)
 * `BigInt` is based on the own vector implementation (template class `DynamicArray`) - requirement of assignment
 * `BigInt` and `DynamicArray` implement "The rule of 5" (constructor, copy constructor, move constructor, assignment operator, move assignment)
 * The size of `BigInt` and `DynamicArray` is limeted by RAM and `std::size_t`
-* Main functionality is covered by 203 assertions of tests ([Header based catch2 library](https://github.com/catchorg/Catch2))
+* Main functionality is covered by 191 assertions ([Header based catch2 library](https://github.com/catchorg/Catch2))
 
 ### How to build and run
 * `make` - to build both *bigint* and *biging_test* 
