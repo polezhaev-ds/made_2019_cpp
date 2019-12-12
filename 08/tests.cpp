@@ -11,6 +11,52 @@
 #include "catch2/catch.hpp"
 #include "Vector.h"
 
+template <class T>
+class DummyClass {
+public:
+    explicit DummyClass(const T& value = 0):
+        value_(value),
+        moves_count_(0),
+        is_empty_(false)
+    {
+    }
+
+    DummyClass(const DummyClass& obj) = default;
+
+    DummyClass(DummyClass&& obj) noexcept:
+        value_(std::move(obj.value_)),
+        moves_count_(obj.moves_count_ + 1),
+        is_empty_(false)
+    {
+        obj.is_empty_ = true;
+    }
+
+    DummyClass& operator = (const DummyClass& obj) = default;
+
+    DummyClass& operator = (DummyClass&& obj) noexcept {
+        value_ = std::move(obj.value_);
+        moves_count_ = obj.moves_count_ + 1;
+        obj.is_empty_ = true;
+    }
+
+    [[nodiscard]] std::size_t moves_count() const {
+        return moves_count_;
+    }
+
+    [[nodiscard]] bool is_empty() const {
+        return is_empty_;
+    }
+
+    [[nodiscard]] const T& value() const {
+        return value_;
+    }
+
+private:
+    T value_;
+    std::size_t moves_count_;
+    bool is_empty_;
+};
+
 template <class Iterator>
 void TestArrowOperatorForIterator() {
     using size_type = typename Iterator::size_type;
@@ -259,6 +305,7 @@ void TestVectorPushAndPopBackMethods(const std::initializer_list<T>& init) {
         vec.push_back(*it);
     CHECK( vec == vec2 );
 
+
     vec.push_back(std::move(T()));
     CHECK( vec[vec.size() - 1] ==  T() );
 
@@ -277,6 +324,16 @@ void TestVectorPushAndPopBackMethods(const std::initializer_list<T>& init) {
     }
     CHECK( is_correct );
     CHECK_THROWS_AS( vec.pop_back(), std::underflow_error );
+
+    Vector<DummyClass<int>> vec3;
+    DummyClass<int> dummy_value {20};
+    vec3.push_back(std::move(dummy_value));
+    CHECK( dummy_value.is_empty() );
+    CHECK( vec3[vec3.size() - 1].moves_count() == 1 );
+    CHECK( vec3[vec3.size() - 1].value() == 20 );
+    vec3.push_back(DummyClass<int> {30});
+    CHECK( vec3[vec3.size() - 1].moves_count() == 1 );
+    CHECK( vec3[vec3.size() - 1].value() == 30 );
 }
 
 template <class T>
@@ -388,7 +445,13 @@ TEST_CASE( "Test class Allocator" ) {
         using T = int;
         CHECK( std::is_same<Allocator<T>::value_type, T>::value );
         CHECK( std::is_same<Allocator<T>::pointer, T*>::value );
+        CHECK( std::is_same<Allocator<T>::const_pointer, const T*>::value );
+        CHECK( std::is_same<Allocator<T>::reference, T&>::value );
+        CHECK( std::is_same<Allocator<T>::const_reference, const T&>::value );
         CHECK( std::is_same<Allocator<T>::size_type, std::size_t>::value );
+        CHECK( std::is_same<Allocator<T>::difference_type, std::ptrdiff_t>::value );
+        CHECK( std::is_same<Allocator<T>::propagate_on_container_move_assignment, std::true_type>::value );
+        CHECK( std::is_same<Allocator<T>::is_always_equal, std::true_type>::value );
     }
 
     SECTION( "Test allocation and deallocation methods of class Allocator" ) {
@@ -400,9 +463,32 @@ TEST_CASE( "Test class Allocator" ) {
 
         for (std::size_t i = 0; i < size; ++i)
             pointer[i] = i;
+        bool is_correct = true;
         for (std::size_t i = 0; i < size; ++i)
-            CHECK( pointer[i] == i );
+            if (pointer[i] != i) {
+                is_correct = false;
+                break;
+            }
+        CHECK( is_correct );
         CHECK_NOTHROW( alloc.deallocate(pointer, size) );
+    }
+
+    SECTION( "Test construct and destroy methods of class Allocator ") {
+        Allocator<std::size_t> alloc;
+        const std::size_t size = 5;
+        std::size_t* pointer = alloc.allocate(size);
+        for (std::size_t i = 0; i < size; ++i)
+            alloc.construct(pointer + i, i);
+        bool is_correct = true;
+        for (std::size_t i = 0; i < size; ++i)
+            if (pointer[i] != i) {
+                is_correct = false;
+                break;
+            }
+        CHECK( is_correct );
+        for (std::size_t i = 0; i < size; ++i)
+            alloc.destroy(pointer + i);
+        alloc.deallocate(pointer, size);
     }
 
     SECTION( "Test max_size value of class Allocator" ) {
@@ -410,6 +496,13 @@ TEST_CASE( "Test class Allocator" ) {
         Allocator<double> alloc_double;
         CHECK( (alloc_int.max_size() == std::numeric_limits<std::size_t>::max() / sizeof(int)) );
         CHECK( (alloc_double.max_size() == std::numeric_limits<std::size_t>::max() / sizeof(double)) );
+    }
+
+    SECTION( "Test == and != operators of class Allocator") {
+        Allocator<int> x;
+        Allocator<double> y;
+        CHECK( x == y );
+        CHECK( !(x != y) );
     }
 }
 
@@ -424,7 +517,7 @@ TEST_CASE( "Test class Iterator" ) {
         CHECK( std::is_same<Iterator<T>::pointer, T*>::value );
         CHECK( std::is_same<Iterator<T>::const_pointer, const T*>::value );
         CHECK( std::is_same<Iterator<T>::size_type, std::size_t>::value );
-        CHECK( std::is_same<Iterator<T>::difference_type, std::int64_t>::value );
+        CHECK( std::is_same<Iterator<T>::difference_type, std::ptrdiff_t>::value );
     }
 
     SECTION( "Test constructors of class Iterator" ) {

@@ -6,6 +6,7 @@
 #define HW8_VECTOR_H
 
 #include <iterator>
+#include <memory>
 #include "Iterator.h"
 #include "Allocator.h"
 
@@ -29,16 +30,16 @@ public:
     {
     }
 
-    explicit Vector(size_type count, const value_type& default_value):
+    explicit Vector(size_type count, const_reference default_value):
         alloc_(Alloc()),
         capacity_(count),
         size_(count),
         buffer_(nullptr)
     {
         if (size_ > 0) {
-            buffer_ = alloc_.allocate(capacity_);
+            buffer_ = std::allocator_traits<Alloc>::allocate(alloc_, capacity_);
             for (size_type i = 0; i < size_; ++i)
-                new(buffer_ + i) T(default_value);
+                std::allocator_traits<Alloc>::construct(alloc_, buffer_ + i, default_value);
         }
     }
 
@@ -49,10 +50,10 @@ public:
         buffer_(nullptr)
     {
         if (size_ > 0) {
-            buffer_ = alloc_.allocate(capacity_);
+            buffer_ = std::allocator_traits<Alloc>::allocate(alloc_, capacity_);
             size_type i = 0;
             for (auto it = init.begin(); it != init.end(); ++it, ++i)
-                new(buffer_ + i) T(*it);
+                std::allocator_traits<Alloc>::construct(alloc_, buffer_ + i, *it);
         }
     }
 
@@ -88,27 +89,30 @@ public:
     reverse_iterator rbegin() {
         return reverse_iterator(end());
     }
+
     iterator end() {
         return Iterator<T>(buffer_ + size_);
     }
+
     reverse_iterator rend() {
         return reverse_iterator(begin());
     }
 
-    T& operator [] (size_type index) {
-        return buffer_[index];
-    }
-    const T& operator [] (size_type index) const {
+    reference operator [] (size_type index) {
         return buffer_[index];
     }
 
-    T& at(size_type index) {
+    const_reference operator [] (size_type index) const {
+        return buffer_[index];
+    }
+
+    reference at(size_type index) {
         if (index >= size_)
             throw std::out_of_range("index is out of range");
         return buffer_[index];
     }
 
-    const T& at(size_type index) const {
+    const_reference at(size_type index) const {
         if (index >= size_)
             throw std::out_of_range("index is out of range");
         return buffer_[index];
@@ -116,11 +120,11 @@ public:
 
     void push_back(value_type&& value);
 
-    void push_back(const value_type& value);
+    void push_back(const_reference value);
 
     void pop_back();
 
-    [[nodiscard]] std::size_t size() const {
+    [[nodiscard]] size_type size() const {
         return size_;
     }
 
@@ -140,7 +144,7 @@ public:
     void resize(size_type new_size) {
         resize(new_size, T());
     }
-    void resize(size_type new_size, const value_type& default_value);
+    void resize(size_type new_size, const_reference default_value);
 
     void clear() {
         resize(0);
@@ -154,7 +158,7 @@ private:
     Alloc alloc_;
     size_type capacity_;
     size_type size_;
-    T* buffer_;
+    pointer buffer_;
 
     void move_from(Vector&& obj);
 
@@ -208,20 +212,20 @@ bool Vector<T, Alloc>::operator != (const Vector& obj) const {
 }
 
 template<class T, class Alloc>
-void Vector<T, Alloc>::push_back(const value_type& value) {
+void Vector<T, Alloc>::push_back(Vector::const_reference value) {
     if (size_ == capacity_)
         grow_memory();
 
-    new (buffer_ + size_) T(value);
+    std::allocator_traits<Alloc>::construct(alloc_, buffer_ + size_, value);
     size_++;
 }
 
 template<class T, class Alloc>
-void Vector<T, Alloc>::push_back(value_type&& value) {
+void Vector<T, Alloc>::push_back(Vector::value_type&& value) {
     if (size_ == capacity_)
         grow_memory();
 
-    new (buffer_ + size_) T(value);
+    std::allocator_traits<Alloc>::construct(alloc_, buffer_ + size_, std::move(value));
     size_++;
 }
 
@@ -229,21 +233,21 @@ template<class T, class Alloc>
 void Vector<T, Alloc>::pop_back() {
     if (empty())
         throw std::underflow_error("Vector is empty");
-    (buffer_ + size_)->~T();
+    std::allocator_traits<Alloc>::destroy(alloc_, buffer_ + size_);
     size_--;
 }
 
 template<class T, class Alloc>
-void Vector<T, Alloc>::resize(Vector::size_type new_size, const value_type& default_value) {
+void Vector<T, Alloc>::resize(Vector::size_type new_size, Vector::const_reference default_value) {
     if (new_size < size_) {
         for (size_type i = new_size; i < size_; ++i)
-            (buffer_ + i)->~T();
+            std::allocator_traits<Alloc>::destroy(alloc_, buffer_ + i);
         size_ = new_size;
     } else if (new_size > size_) {
         if (new_size > capacity_)
             move_to_new_buffer_of_size(new_size);
         for (size_type i = size_; i < new_size; ++i)
-            new (buffer_ + i) T(default_value);
+            std::allocator_traits<Alloc>::construct(alloc_, buffer_ + i, default_value);
         size_ = new_size;
     }
 }
@@ -265,9 +269,9 @@ void Vector<T, Alloc>::allocate_and_copy_from(const Vector& obj) {
     capacity_ = obj.capacity_;
     size_ = obj.size_;
 
-    buffer_ = alloc_.allocate(capacity_);
+    buffer_ = std::allocator_traits<Alloc>::allocate(alloc_, capacity_);
     for (size_type i = 0; i < size_; ++i)
-        new (buffer_ + i) T(obj.buffer_[i]);
+        std::allocator_traits<Alloc>::construct(alloc_, buffer_ + i, obj.buffer_[i]);
 }
 
 template<class T, class Alloc>
@@ -278,10 +282,9 @@ void Vector<T, Alloc>::move_to_new_buffer_of_size(Vector::size_type new_capacity
     size_type new_size_ = std::min(size_, new_capacity);
 
     if (new_capacity != 0) {
-        T* new_buffer = alloc_.allocate(new_capacity);
+        T* new_buffer = std::allocator_traits<Alloc>::allocate(alloc_, new_capacity);
         for (size_type i = 0; i < new_size_; ++i) {
-            new (new_buffer + i) T(buffer_[i]);
-            (buffer_ + i)->~T();
+            std::allocator_traits<Alloc>::construct(alloc_, new_buffer + i, std::move(buffer_[i]));
         }
         free_buffer();
         buffer_ = new_buffer;
@@ -295,7 +298,7 @@ void Vector<T, Alloc>::move_to_new_buffer_of_size(Vector::size_type new_capacity
 template<class T, class Alloc>
 void Vector<T, Alloc>::free_buffer() {
     resize(0);
-    alloc_.deallocate(buffer_, capacity_);
+    std::allocator_traits<Alloc>::deallocate(alloc_, buffer_, capacity_);
     capacity_ = 0;
     buffer_ = nullptr;
 }

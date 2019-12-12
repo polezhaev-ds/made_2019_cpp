@@ -13,7 +13,6 @@ endif
 
 OPTS=-DNDEBUG -std=c++1y
 
-
 all: ${TARGET} ${TARGET_TEST}
 	./${TARGET_TEST}
 	./${TARGET}

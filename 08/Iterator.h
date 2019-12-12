@@ -23,7 +23,7 @@ public:
     using pointer = T*;
     using const_pointer = const T*;
     using size_type = std::size_t;
-    using difference_type = std::int64_t;
+    using difference_type = std::ptrdiff_t;
 
     explicit Iterator(pointer ptr):
             pointer_(ptr)
@@ -154,7 +154,7 @@ public:
     }
 
 private:
-    T* pointer_;;
+    pointer pointer_;;
 };
 
 template <class T>
