@@ -19,21 +19,9 @@ std::string toString(T&& value) {
     return strStream.str();
 }
 
-template <std::size_t count>
-std::array<std::string, count> ArgsToString() {
-    return std::array<std::string, count>();
-}
-
-template <std::size_t count,  class T, class... ArgsT>
-std::array<std::string, count> ArgsToString(T&& argValue, ArgsT&&... args) {
-    std::array<std::string, count> argStrings = ArgsToString<count, ArgsT...>(std::forward<ArgsT>(args)...);
-    argStrings[count - 1 - sizeof...(args)] = toString(argValue);
-    return argStrings;
-}
-
 template <class... ArgsT>
 std::string Format(std::string formatStr, ArgsT&&... args) {
-    std::array<std::string, sizeof...(args)> stringArgs = ArgsToString<sizeof...(args), ArgsT...>(std::forward<ArgsT>(args)...);
+    std::array<std::string, sizeof...(args)> stringArgs { toString(std::forward<ArgsT>(args))... };
     std::string result;
 
     bool isLeftBraceFound = false;
