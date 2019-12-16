@@ -13,7 +13,7 @@ else
 	TARGET_TEST=${OUTPUT_DIR}/${OUTPUT_NAME}_test
 endif
 
-OPTS=-DNDEBUG -std=c++17
+OPTS=-DNDEBUG -std=c++17 -pthread
 
 all: ${TARGET} ${TARGET_TEST}
 	./${TARGET_TEST}
