@@ -68,8 +68,10 @@ void testThreadPoolForParallelAccumulate(std::size_t poolSize) {
 TEST_CASE( "Test class ThreadPool" ) {
 
     SECTION( "Test when number of threads is zero" ) {
-        CHECK_THROWS_AS( ThreadPool(0), std::runtime_error );
-        CHECK_THROWS_WITH( ThreadPool(0), Catch::Contains("Pool should contain at least one thread") );
+        std::size_t cores_count = std::thread::hardware_concurrency();
+        if (cores_count == 0)
+            cores_count = 1;
+        CHECK( ThreadPool(0).GetPoolSize() == cores_count );
     }
 
     SECTION( "Test when number of threads is one" ) {

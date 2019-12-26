@@ -4,7 +4,7 @@ OUTPUT_DIR=build
 OUTPUT_NAME=thread_pool
 
 ifeq ($(OS),Windows_NT)
-	CC=C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin\g++.exe
+	CC=D:\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe
 	TARGET=${OUTPUT_DIR}/${OUTPUT_NAME}.exe
 	TARGET_TEST=${OUTPUT_DIR}/${OUTPUT_NAME}_test.exe
 else

@@ -21,16 +21,19 @@ public:
     explicit ThreadPool(size_t poolSize):
         keep_working_(true)
     {
-        if (poolSize == 0)
-            throw std::runtime_error("Pool should contain at least one thread");
+        if (poolSize == 0) {
+            poolSize = std::thread::hardware_concurrency();
+            if (poolSize == 0)
+                poolSize = 1;
+        }
+
         for (std::size_t i = 0; i < poolSize; ++i)
-            threads_.push_back(std::thread(&ThreadPool::threadFunction, this));
+            threads_.emplace_back(&ThreadPool::threadFunction, this);
     }
 
     ~ThreadPool()
     {
         keep_working_ = false;
-        std::atomic_thread_fence(std::memory_order::memory_order_release);
         task_ready_conditional_variable_.notify_all();
 
         for (auto& thread : threads_)
@@ -45,8 +48,11 @@ public:
 
     // pass arguments by value
     template <class Func, class... Args>
-    auto exec(Func func, Args... args) -> std::future<decltype(func(args...))>;
+    auto exec(Func func, Args... args);
 
+    [[nodiscard]] std::size_t GetPoolSize() const {
+        return threads_.size();
+    }
 
 private:
 
@@ -84,7 +90,7 @@ private:
     };
 
 
-    bool keep_working_;
+    std::atomic<bool> keep_working_;
 
     std::queue<std::unique_ptr<AbstractTask>> queue_;
     std::mutex queue_mutex_;
@@ -98,12 +104,13 @@ private:
     void threadSafeEnqueue(std::unique_ptr<AbstractTask>&& task);
 
     std::unique_ptr<AbstractTask> threadSafeDequeue();
+    bool threadSafeIsQueueEmpty();
 
     void threadFunction();
 };
 
 template<class Func, class... Args>
-auto ThreadPool::exec(Func func, Args... args) -> std::future<decltype(func(args...))> {
+auto ThreadPool::exec(Func func, Args... args) {
     using ReturnType = decltype(func(args...));
     std::promise<ReturnType> promise;
     std::future<ReturnType> future = promise.get_future();
@@ -117,7 +124,7 @@ auto ThreadPool::exec(Func func, Args... args) -> std::future<decltype(func(args
 template<class Func, class ReturnType, class... Args>
 void ThreadPool::Task<Func, ReturnType, Args...>::run() {
     try {
-        if constexpr (std::is_same<ReturnType, void>::value) {
+        if constexpr (std::is_same_v<ReturnType, void>) {
             function_();
             promise_.set_value();
         } else {

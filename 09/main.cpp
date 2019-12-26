@@ -8,7 +8,6 @@ struct A {};
 void foo(const A&) {}
 
 int main() {
-
     ThreadPool pool(8);
 
     auto task1 = pool.exec(foo, A());
