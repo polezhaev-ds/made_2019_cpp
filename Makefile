@@ -4,7 +4,7 @@ test:
 		if [ -f  $${f}/Makefile ]; then \
 			echo "Assignment $${f}"; \
 			$(MAKE) -C "$${f}" test; \
-	fi \
+		fi \
 	done
 
 clean:

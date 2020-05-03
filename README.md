@@ -1,6 +1,48 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #9 - ThreadPool (C++ threads)
+### Features
+* It is a fixed size thread pool implementation based on `std::thread` (class `ThreadPool`)
+* Each thread either executes a task or sleeps
+* New task is added to the pool's queue, after that sleeping threads are notified
+* Awaken thread checks, if there is a task in the queue, extracts it and executes
+* If there is no tasks, thread falls asleep waiting for notification
+* It is required that `ThreadPool` should have the following interface:
+~~~
+        class ThreadPool
+        {
+        public:
+            explicit ThreadPool(size_t poolSize);
+        
+             // pass arguments by value
+            template <class Func, class... Args>
+            auto exec(Func func, Args... args) -> std::future<decltype(func(args...))>;
+        };
+~~~
+* Usage example:
+~~~
+        struct A {};
+        
+        void foo(const A&) {}
+        
+        ThreadPool pool(8);
+        
+        auto task1 = pool.exec(foo, A());
+        task1.get();
+        
+        auto task2 = pool.exec([]() { return 1; });
+        task2.get();
+~~~
+
+### How to build and run
+* `make` - to build both *vector_pool* and *vector_pool_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run a simple sample
+* `make clean` - to clean output
+* `./build/vector_pool` - to run a simple sample
+* `./build/vector_pool_test` - to run tests
+
 ## Home assignment #8 - Vector (STL-like implementation)
 
 ### Features
