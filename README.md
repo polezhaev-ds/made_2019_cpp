@@ -1,6 +1,25 @@
 # made_2019_cpp
 MADE: Repository for home assignments (Advanced C++ course)
 
+## Home assignment #8 - Vector (STL-like implementation)
+
+### Features
+* It is a simple STL-like implementation of a template `Vector` class
+* The following template classes were implemented:
+    * `Allocator<T>` - a simple allocator that supports allocation with `new[]` and deallocation with `delete[]`
+    * `Iterator<T>` - a custom random access iterator which supports all methods and traits required by STL
+    * `Vector<T,Alloc>` - a vector class that supports only constructors (with reservation and filling in with default `T()` or specific value, for `std::initializer_list<T>`, copy-constructor and move-constructor), destructor, operators (assign and move-assign `=`, comparison `==` and `!=`, `[]`), methods `clear`, `reserve`, `resize`, `begin`, `end`, `rbegin`, `rend`, `push_back`, `pop_back`, `empty`, `size`, `capacity`)
+* To use `Vector<T>`, it is neccessary to include `"Vector.h"` header
+* Main functionality is covered by 359 assertions ([Header based catch2 library](https://github.com/catchorg/Catch2))
+
+### How to build and run
+* `make` - to build both *vector* and *vector_test* 
+* `make test` - to build and run tests
+* `make run` - to build and run a simple sample
+* `make clean` - to clean output
+* `./build/vector` - to run a simple sample
+* `./build/vector_test` - to run tests
+
 ## Home assignment #7 - Format (exceptions)
 
 ### Features
