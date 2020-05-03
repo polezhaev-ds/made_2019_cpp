@@ -1,18 +1,17 @@
 test:
 	@for f in $(shell ls .); \
 	do \
-		 if [ -f  $${f}/Makefile ]; then \
+		if [ -f  $${f}/Makefile ]; then \
 			echo "Assignment $${f}"; \
 			$(MAKE) -C "$${f}" test; \
-		 fi \
+		fi \
 	done
 
 clean:
 	@for f in $(shell ls .) ; \
 	do \
-                 if [ -f  $${f}/Makefile ]; then \
-                        echo "Assignment $${f}"; \
-                        $(MAKE) -C "$${f}" clean; \
-                 fi \
-        done
-
+		if [ -f  $${f}/Makefile ]; then \
+			echo "Assignment $${f}"; \
+			$(MAKE) -C "$${f}" clean; \
+		fi \
+	done
